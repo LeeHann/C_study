@@ -1,0 +1,12 @@
+
+obj/
+main
+.DX_Store
+build/
+.vscode/
+out/
+*.so
+*.dll
+*.pyd
+*.exe
+*.pyd
