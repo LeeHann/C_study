@@ -10,4 +10,5 @@ for i in range(1, 48) :
         backward(100)
         lt(45)
         pendown()
-        
+goto(0, 0)
+
