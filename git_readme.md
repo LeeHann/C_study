@@ -1,4 +1,5 @@
 내가 정리하는 github 사용법
+
 (github에 새로 만든 레포지토리가 있다고 가정)
 
 1. git 설치
@@ -27,3 +28,4 @@ and the repository exists.
 -> git push -u origin master -> 엔터 -> 비밀번호 입력(이후 브랜치 등 할때 다시 입력해야 할 수도 있음) -> 끝
 8. git add -A
 9. git commit -m "commit message"
+10. git push origin master
