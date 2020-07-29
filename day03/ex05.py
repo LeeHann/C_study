@@ -5,10 +5,14 @@ name = "lee hanna"
 real = 3.14
 
 print(num)
-print(type(num))
+print(type(num)) # int
 
 print(name)
-print(type(name))
+print(type(name)) # str
 
 print(real)
-print(type(real))
+print(type(real)) # float
+
+num_bin = 0b10101;
+print(num_bin)
+print(type(num_bin)) #int
