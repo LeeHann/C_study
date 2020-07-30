@@ -70,6 +70,9 @@ int Sum(int value1, int value2){ // 반환형 함수이름(자료형 매개변�
 
 라이브러리 파일 만들기
 - gcc lib.c -c -o lib.o
+- 컴파일(complier) -> -o // obj -> -c
+- 링킹(linking) -> .exe
+
 두 개의 오브젝트 파일 합치기
 ar r libex04.a(출력파일) ./ex04_lib.o ./ex04_lib2.o(병합할 파일/들)
 gcc ex04.c -o ex04.exe -L ./ -lex04 
