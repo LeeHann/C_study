@@ -79,3 +79,9 @@ gcc ex04.c -o ex04.exe -L ./ -lex04
 -L (경로)
 라이브러리 계열 확장자 .a, 접두사는 반드시 lib
 ex/ libxxxx.a => 실제이름은 xxxx => -lxxxx 
+
+9. if-else if-else 조건문
+c의 컴파일러가 스택을 사용하여 if문을 받아서 else if의 사용이 많아지면 비효율적이다.
+따라서 else if 의 사용이 많으면 switch문을 이용하는 것이 효율적이다. 
+
+python은 인터프리터 형 언어이기 때문에 위와 같은 효율성의 문제가 없어 switch문이 없다.
