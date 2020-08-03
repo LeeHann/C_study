@@ -18,3 +18,7 @@ ex09 : ex09.c
 
 ex10 : ex10.c
 	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2
+
+ex11 : ex11.c
+	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+

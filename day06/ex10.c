@@ -25,7 +25,10 @@ int main(int argc, char *argv[]){
             bLoop = SDL_FALSE;
             break;
           case SDL_MOUSEBUTTONDOWN:
-            printf("%d \n", event.button.button);
+            printf("%d [%4d%4d]\n", event.button.button, event.motion.x, event.motion.y);
+            break;
+          case SDL_MOUSEMOTION:
+            printf("[%4d, %4d] \r", event.motion.x, event.motion.y);
             break;
         }
       }
