@@ -1,10 +1,8 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 
-int result; //전역 변수
-void _Sum(int data1, int data2){
-  result = data1 + data2;
-}
+extern int result2;
+void Sum(int, int);
 
 int main(int argc, char *argv[]){
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -13,9 +11,7 @@ int main(int argc, char *argv[]){
     return 1;
   }
 
-  _Sum(5, 3);
-  printf("%d \n", result);
-
+//  printf("%d \n", result2); // linking error : static 변수로 선언된 전역 변수 참조
   SDL_Quit();
   return 0;
 }

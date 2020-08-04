@@ -1,10 +1,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 
-int result; //전역 변수
-void _Sum(int data1, int data2){
-  result = data1 + data2;
-}
+const float _PI = 3.14;
 
 int main(int argc, char *argv[]){
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -13,8 +10,8 @@ int main(int argc, char *argv[]){
     return 1;
   }
 
-  _Sum(5, 3);
-  printf("%d \n", result);
+  printf("%f \n", _PI);
+  //_PI = 3.4 // compile error
 
   SDL_Quit();
   return 0;
