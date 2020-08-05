@@ -8,13 +8,13 @@ ex03 : ex03.c
 	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2
 
 ex04 : ex04.c
-	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2
+	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
 
 ex05 : ex05.c
-	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2
+	gcc -o $@.exe $^
 
 ex06 : ex06.c
-	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2
+	gcc -o $@.exe $^
 
 ex07 : ex07.c
 	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2

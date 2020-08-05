@@ -80,6 +80,9 @@ gcc ex04.c -o ex04.exe -L ./ -lex04
 라이브러리 계열 확장자 .a, 접두사는 반드시 lib
 ex/ libxxxx.a => 실제이름은 xxxx => -lxxxx 
 
+어셈블리 파일 출력
+gcc -S -o out.asm src.c
+
 9. if-else if-else 조건문
 c의 컴파일러가 스택을 사용하여 if문을 받아서 else if의 사용이 많아지면 비효율적이다.
 따라서 else if 의 사용이 많으면 switch문을 이용하는 것이 효율적이다. 
