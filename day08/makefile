@@ -17,10 +17,10 @@ ex06 : ex06.c
 	gcc -o $@.exe $^
 
 ex07 : ex07.c
-	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2
+	gcc -o $@.exe $^
 
 ex08 : ex08.c
-	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2
+	gcc -o $@.exe $^
 
 ex09 : ex09.c
 	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2
