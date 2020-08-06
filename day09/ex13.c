@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
                         printf("mouse relative [%4d,%4d]\n", event.motion.xrel, event.motion.yrel);
                         break;
                     case SDL_MOUSEBUTTONDOWN:
-                        // SDL_GetMouseState(&_mouseX, &_mouseY);
-                        // SDL_BUTTON_LMASK
+                        SDL_GetMouseState(&_mouseX, &_mouseY);
+                        //SDL_BUTTON_LMASK
                         printf("mouse down at [%4d,%4d][%2d,%2d][%8d] \n",
                                event.motion.x, event.motion.y,
                                event.motion.state & SDL_BUTTON_LMASK , event.motion.state & SDL_BUTTON_RMASK,

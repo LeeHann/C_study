@@ -6,8 +6,6 @@ int main(){
   int t;
   
   char *pt = (char *)c;
- // *(pt+1) = (char *)b;
-
   printf("%x \n", pt);
 
   return 0;
