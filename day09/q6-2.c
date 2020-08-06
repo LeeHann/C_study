@@ -3,9 +3,10 @@
 int main(){
   char a = 0x12, b = 0x34;
   short c = 0x5678;
-
-  int *pt;
-  pt = &a;
+  int t;
+  
+  char *pt = (char *)c;
+ // *(pt+1) = (char *)b;
 
   printf("%x \n", pt);
 

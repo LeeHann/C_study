@@ -33,3 +33,10 @@ ex11 : ex11.c
 
 q4 : q4.c
 	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2
+
+q6 : q6.c
+	gcc -o $@.exe $^
+
+q6-2 : q6-2.c
+	gcc -o $@.exe $^
+	
