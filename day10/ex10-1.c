@@ -1,4 +1,3 @@
-//타일 맵 그리기
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
@@ -13,13 +12,57 @@ SDL_Window *gWindow;
 SDL_Renderer *g_pRenderer;
 SDL_Texture *g_pTitleTexture;
 
-Uint16 g_worldMap_Layer1[64];
+Uint16 g_worldMap_Layer_1[64];
+
+void processCmd(char *_szCmd,SDL_bool *bLoop)
+{
+  static char szCmd[32];
+  static char szTokens[8][32];
+
+  strcpy(szCmd,_szCmd);
+
+  printf("token count %s\n",szCmd);
+  int _numToken = doTokenize(szCmd, szTokens);
+
+  printf("token count %d\n",_numToken);
+
+  if (strcmp(szTokens[0], "quit") == 0)
+  {
+    *bLoop = SDL_FALSE;
+  }
+  else if (strcmp(szTokens[0], "setTile") == 0)
+  {
+    //setTile x y index
+    int _x = SDL_atoi(szTokens[1]);
+    int _y = SDL_atoi(szTokens[2]);
+    int _index = SDL_atoi(szTokens[3]);
+
+    g_worldMap_Layer_1[(_y * 8) + _x] = _index;
+  }
+  else if (strcmp(szTokens[0], "save") == 0)
+  {
+    //save file.map
+    char *pFileName = szTokens[1];
+    SDL_RWops *rw = SDL_RWFromFile(pFileName, "wb");
+    SDL_RWwrite(rw, g_worldMap_Layer_1, sizeof(Uint16), 64);
+    SDL_RWclose(rw);
+  }
+  else if (strcmp(szTokens[0], "load") == 0)
+  {
+    char *pFileName = szTokens[1];
+    SDL_RWops *rw = SDL_RWFromFile(pFileName, "rb");
+    SDL_RWread(rw, g_worldMap_Layer_1, sizeof(Uint16), 64);
+    SDL_RWclose(rw);
+  }
+}
 
 int main(int argc, char *argv[])
 {
-  for(int i=0; i<64; i++){
-    g_worldMap_Layer1[i] = -1;
+  for (int i = 0; i < 64; i++)
+  {
+    g_worldMap_Layer_1[i] = -1;
   }
+
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
   {
     printf("error initializing SDL: %s\n", SDL_GetError());
@@ -58,24 +101,30 @@ int main(int argc, char *argv[])
   };
 
   int nTileIndex = 0;
-
   SDL_bool bLoop = SDL_TRUE;
   int nInputFSM = 0; //0 -> ready , 1-> text input
+
+  processCmd("setTile 0 0 1",NULL);
+  processCmd("setTile 1 0 1",NULL);
+  processCmd("setTile 2 0 1",NULL);
+
   while (bLoop)
   {
-
     // clears the screen
     SDL_SetRenderDrawColor(g_pRenderer, 0x00, 0x00, 0x00, 0x00);
     SDL_RenderClear(g_pRenderer);
 
-    for(int i=0; i<64; i++){
-      if(g_worldMap_Layer1[i] != -1){
-        putTile(g_pRenderer, g_pTitleTexture, i%8, i/8, g_worldMap_Layer1[i]);
+    for (int i = 0; i < 64; i++)
+    {
+      if (g_worldMap_Layer_1[i] != -1)
+      {
+        putTile(g_pRenderer, g_pTitleTexture, i % 8, i / 8, g_worldMap_Layer_1[i]);
       }
     }
-    //putTile(g_pRenderer, g_pTitleTexture, 1, 1, 0);
-    //putTile(g_pRenderer, g_pTitleTexture, 2, 1, 1);
-    
+
+    // putTile(g_pRenderer,g_pTitleTexture,1,1,0);
+    // putTile(g_pRenderer,g_pTitleTexture,2,1,1);
+
     // for multiple rendering
     SDL_RenderPresent(g_pRenderer);
 
@@ -96,36 +145,11 @@ int main(int argc, char *argv[])
           }
           else if (nInputFSM == 1)
           {
-            static char szTokens[8][32];
-            int _numToken = doTokenize(strBuf, szTokens);
-
-            if (strcmp(szTokens[0], "quit") == 0)
-            {
-              bLoop = SDL_FALSE;
-            }
-            else if (strcmp(szTokens[0], "setTile") == 0)
-            {
-              //serTile x y index
-              int _x = SDL_atoi(szTokens[1]);
-              int _y = SDL_atoi(szTokens[2]);
-              int _index = SDL_atoi(szTokens[3]);
-
-              g_worldMap_Layer1[_y*8 + _x] = _index;
-            }
-            else if (strcmp(szTokens[0], "save") == 0){
-              //save file.map
-              char *pFileName = szTokens[1];
-              SDL_RWops *rw = SDL_RWFromFile(pFileName, "wb");
-              SDL_RWwrite(rw, g_worldMap_Layer1, sizeof(Uint16), 64);
-              SDL_RWclose(rw);
-            }
-            else if (strcmp(szTokens[0], "load") == 0){
-              char *pFileName = szTokens[1];
-              SDL_RWops *rw = SDL_RWFromFile(pFileName, "rb");
-              SDL_RWread(rw, g_worldMap_Layer1, sizeof(Uint16), 64);
-              SDL_RWclose(rw);
-            }
             printf("\n%s\n", strBuf);
+
+            //함수로 만들어 놓기 
+            processCmd(strBuf,&bLoop);
+            
             strBuf[0] = 0x00;
             SDL_StopTextInput();
             nInputFSM = 0;

@@ -22,3 +22,5 @@ ex11 : ex11.c ../engine/parser.c
 	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer
 ex12 : ex12.c 
 	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer
+work : work.c ../engine/parser.c
+	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2

@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
 #include <string.h>
 
 const Uint16 WINDOW_WIDTH = 640;
@@ -15,7 +14,7 @@ typedef struct
   SDL_Color m_color;
 } _S_MyRect;
 
-int doTokenize(char *szBuf, char szBufToken[8][32]);
+int doTokenize(char *szBuf, char (*szBufToken)[32]);
 
 int main(int argc, char *argv[])
 {
@@ -34,20 +33,6 @@ int main(int argc, char *argv[])
   {
     printf("error initializing SDL window: %s\n", SDL_GetError());
     return 1;
-  }
-
-  //Initialize SDL_mixer
-  if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-  {
-    printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-    return 1;
-  }
-
-  Mix_Music *music = Mix_LoadMUS("../res/nj4_2.ogg");
-
-  if (!music)
-  {
-    printf("Failed to load music SDL_mixer Error: %s\n", Mix_GetError());
   }
 
   g_pRenderer = SDL_CreateRenderer(g_pWindow, -1, SDL_RENDERER_ACCELERATED);
@@ -89,6 +74,7 @@ int main(int argc, char *argv[])
       case SDL_TEXTINPUT:
       {
         strcat(strBuf, _event.text.text);
+        printf("%s \r", strBuf);
       }
       break;
       case SDL_KEYDOWN:
@@ -104,15 +90,15 @@ int main(int argc, char *argv[])
           else if (nInputFSM == 1)
           {
             //입력완료
-            static char szTokens[8][32];
+            static char szTokens[16][32];
             int _numToken = doTokenize(strBuf, szTokens);
 
             if (!strcmp(szTokens[0], "quit"))
             {
               bLoop = SDL_FALSE;
             }
-            else if (!strcmp(szTokens[0], "dr"))
-            { //dr 100 100 120 120 255 0 0 255
+            else if (!strcmp(szTokens[0], "dr")) //추가
+            {//dr 100 100 120 120 255 0 0 255
               //dr x y w h r g b a
               SDL_Rect _rt = {atoi(szTokens[1]), atoi(szTokens[2]),
                               atoi(szTokens[3]), atoi(szTokens[4])};
@@ -133,12 +119,25 @@ int main(int argc, char *argv[])
               nInputFSM = 0;
               SDL_StopTextInput();
             }
-            else if (!strcmp(szTokens[0], "pl"))
-            {
-              Mix_PlayMusic(music, -1);
+            else if (!strcmp(szTokens[0], "ed")){ //편집
+              // ed x y w h r g b a
+              SDL_Rect _rt = {atoi(szTokens[1]), atoi(szTokens[2]),
+                              atoi(szTokens[3]), atoi(szTokens[4])};
+              Uint8 r = atoi(szTokens[5]);
+              Uint8 g = atoi(szTokens[6]);
+              Uint8 b = atoi(szTokens[7]);
+              Uint8 a = atoi(szTokens[8]);
+
+
+            }
+            else if (!strcmp(szTokens[0], "rm")){ //삭제
+              // rm num
+              int num = atoi(szTokens[1]);
+
+              SDL_Rect _rt = {0,0,0,0};
+              _rects[num] = _rt;
             }
           }
-
           break;
         case SDL_QUIT:
           bLoop = SDL_FALSE;

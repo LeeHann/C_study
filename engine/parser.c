@@ -2,7 +2,7 @@
 #include <string.h>
 #define MAX_TOKEN_SIZE 32
 
-int doTokenize(char *szBuf, char szBufToken[8][MAX_TOKEN_SIZE])
+int doTokenize(char *szBuf, char (*szBufToken)[MAX_TOKEN_SIZE])
 {
   //change 10
   //[change,10]
