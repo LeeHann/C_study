@@ -1,0 +1,2 @@
+lee han na,40,50,60
+lee min ki,60,40,80
