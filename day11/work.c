@@ -73,6 +73,7 @@ int main(int argc, char *argv[])
       {
       case SDL_TEXTINPUT:
       {
+        rewind(stdin);
         strcat(strBuf, _event.text.text);
         printf("%s \r", strBuf);
       }
