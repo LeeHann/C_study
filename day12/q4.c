@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <malloc.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef struct Student
 {
