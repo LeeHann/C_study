@@ -1,9 +1,9 @@
 //성적 처리 - 구조체 & 파일 처리
 #include <stdio.h>
+#include <stdlib.h>
 #include <SDL2/SDL.h>
 #include <malloc.h>
 #include <string.h>
-#include <stdlib.h>
 
 typedef struct Student
 {
@@ -31,35 +31,39 @@ int main(int argc, char *argv[])
   //파일 내용 연결리스트 만들기
   {
     char strBuf[32];
-    while (NULL != fgets(strBuf, sizeof(strBuf), fp)){
+    while (NULL != fgets(strBuf, sizeof(strBuf), fp))
+    {
       student *p = p_student;
-      while(p -> next != NULL){
-      p = p -> next;
+      while (p->next != NULL)
+      {
+        p = p->next;
+      }
+      p->next = (student *)malloc(sizeof(student));
+      p = p->next;
+
+      char *pszTemp;
+      //char szName[32];
+      int v_kor, v_eng, v_math;
+
+      const char *pszDelimiter = ",";
+      pszTemp = strtok(strBuf, pszDelimiter);
+      strcpy(p->name, pszTemp);
+
+      pszTemp = strtok(NULL, pszDelimiter);
+      v_kor = atoi(pszTemp);
+
+      pszTemp = strtok(NULL, pszDelimiter);
+      v_eng = atoi(pszTemp);
+
+      pszTemp = strtok(NULL, pszDelimiter);
+      v_math = atoi(pszTemp);
+
+      p->kor = v_kor;
+      p->eng = v_eng;
+      p->math = v_math;
+      p->next = NULL;
+      _count++;
     }
-    p -> next = (student *)malloc(sizeof(student));
-    p = p -> next;
-
-    char *pszTemp;
-    //char szName[32];
-    int v_kor, v_eng, v_math;
-
-    const char *pszDelimiter = ",";
-    pszTemp = strtok(strBuf, pszDelimiter);
-    strcpy(p->name, pszTemp);
-
-    pszTemp = strtok(NULL, pszDelimiter);
-    v_kor = atoi(pszTemp);
-  
-    pszTemp = strtok(NULL, pszDelimiter);
-    v_eng = atoi(pszTemp);
-
-    pszTemp = strtok(NULL, pszDelimiter);
-    v_math = atoi(pszTemp);
-
-    p->kor = v_kor;
-    p->eng = v_eng;
-    p->math = v_math;
-    p -> next = NULL;
   }
 
   SDL_bool bLoop = SDL_TRUE;
@@ -92,9 +96,7 @@ int main(int argc, char *argv[])
       printf("input student info\n");
 
       printf("%d student name : ", _count);
-      char v_name[32];
-      scanf("%s", v_name);
-      strcpy(p->name, v_name);
+      scanf("%s", p->name);
 
       printf("korean : ");
       scanf(" %d", &p->kor);
