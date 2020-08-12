@@ -26,7 +26,9 @@ int main(int argc, char *argv[])
   p_student->next = NULL;
 
   FILE *fp;
-  fp = fopen("student.txt", "a");
+  fp = fopen("student.txt", "r+");
+
+
 
   SDL_bool bLoop = SDL_TRUE;
 
@@ -45,7 +47,7 @@ int main(int argc, char *argv[])
 
     switch (select_num)
     {
-    case '1': //입력 + 파일에 추가
+    case '1': //입력
     {
       _count++;
       student *p = p_student;
@@ -73,15 +75,17 @@ int main(int argc, char *argv[])
 
       p->next = NULL;
 
-      printf("%s %d %d %d\n", p->name, p->kor, p->eng, p->math);
+      fseek(fp, 0, SEEK_END);
+      fprintf(fp, "\n%s,%d,%d,%d", p->name, p->kor, p->eng, p->math);
     }
-    break;
+      break;
 
-    case 2: //삭제
+    case '2': //삭제
     {
-      if (_count < 1)
+      if (_count < 1){
         printf("there's no people to remove\n");
-
+        break;
+      }
       student *p = p_student;
       student *p_pre;
       student *p_next;
@@ -102,20 +106,59 @@ int main(int argc, char *argv[])
         p_pre = p;
         p = p->next;
       }
+      _count--;
+    }
+      break;
+
+    case '3': // 수정
+    {
+      char name[32];
+      char strBuf[32];
+      printf("input name you want to edit : ");
+      scanf("%s ", name);
+
+      fseek(fp, 0, SEEK_SET);
+      while (NULL != fgets(strBuf, sizeof(strBuf), fp))
+      {
+        char *pszTemp;
+        char szName[32];
+
+        const char *pszDelimiter = ",";
+        pszTemp = strtok(strBuf, pszDelimiter);
+        strcpy(szName, pszTemp);
+        if (!strcmp(szName, name))
+        {
+          char v_name[32];
+          int v_kor, v_eng, v_math; 
+          printf("input student info\n");
+
+          printf("name : ");
+          scanf("%s", v_name);
+        
+          printf("korean : ");
+          scanf(" %d", &v_kor);
+
+          printf("english : ");
+          scanf("%d", &v_eng);
+
+          printf("mathmetics : ");
+          scanf("%d", &v_math);
+
+          fprintf(fp, "\n%s,%d,%d,%d", v_name, v_kor, v_eng, v_math);
+        }
+      }
     }
     break;
 
-    case 3: // 수정
+    case '4': // 총점
       break;
 
-    case 4: // 총점
-      break;
-
-    case 5: // 평균
+    case '5': // 평균
       break;
 
     case 'p':
     {
+      fseek(fp, 0, SEEK_SET);
       char strBuf[32];
       while (NULL != fgets(strBuf, sizeof(strBuf), fp))
       {

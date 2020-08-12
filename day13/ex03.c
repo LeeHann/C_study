@@ -8,8 +8,8 @@ int SumABS(int a, int b, void (*fp_abs)(int *)){
   //if(a<0) a = 0-a;
   //if(b<0) b = 0-b;
 
-  fp_abs(&a);
-  fp_abs(&b);
+  if(fp_abs) fp_abs(&a);
+  if(fp_abs) fp_abs(&b);
 
   return a + b;
 }
