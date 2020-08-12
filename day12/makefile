@@ -20,3 +20,9 @@ ex10 : ex10.c
 	gcc -o $@.exe $^
 ex11 : ex11.c
 	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2
+ex12 : ex12.c
+	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2	
+ex13 : ex13.c ../engine/tile.c
+	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+q4 : q4.c
+	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2	

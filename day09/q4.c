@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
     printf("q. quit \n");
 
     _sel_menu = getchar();
-    rewind(stdin);
+    rewind(stdin); 
     switch (_sel_menu)
     {
     case '1': //input score

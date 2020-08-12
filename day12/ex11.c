@@ -13,7 +13,6 @@ int main(int argc, char* argv[])
   SDL_RWwrite(rw, &_rect, sizeof(SDL_Rect), 1);
   
   SDL_RWclose(rw);
-  
-  printf("x:%d,y:%d,w:%d,h:%d", _rect.x, _rect.y, _rect.h, _rect.w);
+
   return 0;
 }
