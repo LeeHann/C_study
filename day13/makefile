@@ -12,3 +12,5 @@ ex05 : ex05.c
 	gcc -o $@ $^
 ex06 : ex06.c ../engine/util.c
 	gcc -o $@ $^ -lmingw32 -lSDL2main -lSDL2
+ex07 : ex07.c ../engine/util.c ../engine/button.c
+	gcc -o $@ $^ -lmingw32 -lSDL2main -lSDL2

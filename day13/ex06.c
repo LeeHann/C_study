@@ -7,6 +7,16 @@ const Uint16 WINDOW_HEIGHT = 480;
 SDL_Window *g_pWindow;
 SDL_Renderer *g_pRenderer;
 
+typedef struct _S_BUTTON
+{
+  SDL_Rect m_Rect;
+  // Uint16 m_nFSM;
+  SDL_bool bCheckHitRect;
+
+} S_BUTTON;
+
+S_BUTTON g_Buttons[2];
+
 int main(int argc, char *argv[])
 {
   if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
@@ -25,36 +35,68 @@ int main(int argc, char *argv[])
   }
 
   SDL_bool bLoop = SDL_TRUE;
-  SDL_bool bCheckHitRect = SDL_FALSE;
-  SDL_bool bCheckHitRect2 = SDL_FALSE;
-  
+  // SDL_bool bCheckHitRect = SDL_FALSE;
+  // SDL_bool bCheckHitRect2 = SDL_FALSE;
+
+  {
+    S_BUTTON *pbtn = &g_Buttons[0];
+    pbtn->m_Rect.x = 100;
+    pbtn->m_Rect.y = 100;
+    pbtn->m_Rect.w = 120;
+    pbtn->m_Rect.h = 120;
+    pbtn->bCheckHitRect = SDL_FALSE;
+  }
+  {
+    S_BUTTON *pbtn = &g_Buttons[1];
+    pbtn->m_Rect.x = 300;
+    pbtn->m_Rect.y = 100;
+    pbtn->m_Rect.w = 120;
+    pbtn->m_Rect.h = 120;
+    pbtn->bCheckHitRect = SDL_FALSE;
+  }
+
   while (bLoop)
   {
     SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 0, 255);
     SDL_RenderClear(g_pRenderer);
     SDL_Rect testRect = {100, 100, 120, 120};
     SDL_Rect testRect2 = {250, 250, 100, 100};
-     
-    if (!bCheckHitRect)
+
+    //버튼 랜더
+    for (int i = 0; i < sizeof(g_Buttons) / sizeof(S_BUTTON); i++)
     {
-      SDL_SetRenderDrawColor(g_pRenderer, 255, 255, 255, 255);
-      SDL_RenderDrawRect(g_pRenderer, &testRect);
+      S_BUTTON *pBtn = &g_Buttons[i];
+      if (!pBtn->bCheckHitRect)
+      {
+        SDL_SetRenderDrawColor(g_pRenderer, 255, 255, 255, 255);
+        SDL_RenderDrawRect(g_pRenderer, &(pBtn->m_Rect));
+      }
+      else
+      {
+        SDL_SetRenderDrawColor(g_pRenderer, 255, 0, 0, 255);
+        SDL_RenderFillRect(g_pRenderer, &(pBtn->m_Rect));
+      }
     }
-    else
-    {
-      SDL_SetRenderDrawColor(g_pRenderer, 255, 0, 0, 255);
-      SDL_RenderFillRect(g_pRenderer, &testRect);
-    }
-    if (!bCheckHitRect2)
-    {
-      SDL_SetRenderDrawColor(g_pRenderer, 255, 255, 255, 255);
-      SDL_RenderDrawRect(g_pRenderer, &testRect2);
-    }
-    else
-    {
-      SDL_SetRenderDrawColor(g_pRenderer, 0, 255, 0, 255);
-      SDL_RenderFillRect(g_pRenderer, &testRect2);
-    }
+    // if (!bCheckHitRect)
+    // {
+    //   SDL_SetRenderDrawColor(g_pRenderer, 255, 255, 255, 255);
+    //   SDL_RenderDrawRect(g_pRenderer, &testRect);
+    // }
+    // else
+    // {
+    //   SDL_SetRenderDrawColor(g_pRenderer, 255, 0, 0, 255);
+    //   SDL_RenderFillRect(g_pRenderer, &testRect);
+    // }
+    // if (!bCheckHitRect2)
+    // {
+    //   SDL_SetRenderDrawColor(g_pRenderer, 255, 255, 255, 255);
+    //   SDL_RenderDrawRect(g_pRenderer, &testRect2);
+    // }
+    // else
+    // {
+    //   SDL_SetRenderDrawColor(g_pRenderer, 0, 255, 0, 255);
+    //   SDL_RenderFillRect(g_pRenderer, &testRect2);
+    // }
 
     SDL_RenderPresent(g_pRenderer);
 
@@ -67,21 +109,37 @@ int main(int argc, char *argv[])
       {
         int _mx = _event.motion.x;
         int _my = _event.motion.y;
-        if(checkPointInRect(&testRect, _event.motion.x, _event.motion.y) == SDL_TRUE){
-          printf("push button1 \n");
+
+        for (int i = 0; i < 2; i++)
+        {
+          if (checkPointInRect(&(g_Buttons[i].m_Rect), _event.motion.x, _event.motion.y) == SDL_TRUE)
+          {
+            printf("button index %d down \n", i);
+          }
         }
-        if(checkPointInRect(&testRect2, _event.motion.x, _event.motion.y) == SDL_TRUE){
-          printf("push button2 \n");
-        }
+
+        // if (checkPointInRect(&testRect, _event.motion.x, _event.motion.y) == SDL_TRUE)
+        // {
+        //   printf("push button1 \n");
+        // }
+        // if (checkPointInRect(&testRect2, _event.motion.x, _event.motion.y) == SDL_TRUE)
+        // {
+        //   printf("push button2 \n");
+        // }
       }
       break;
       case SDL_MOUSEMOTION:
       {
+        for (int i = 0; i < 2; i++)
+        {
+          g_Buttons[i].bCheckHitRect =
+              checkPointInRect(&(g_Buttons[i].m_Rect), _event.motion.x, _event.motion.y);
+        }
         // int _mx = _event.motion.x;
         // int _my = _event.motion.y;
-        
-        bCheckHitRect = checkPointInRect(&testRect, _event.motion.x, _event.motion.y);
-        bCheckHitRect2 = checkPointInRect(&testRect2, _event.motion.x, _event.motion.y);
+
+        // bCheckHitRect = checkPointInRect(&testRect, _event.motion.x, _event.motion.y);
+        // bCheckHitRect2 = checkPointInRect(&testRect2, _event.motion.x, _event.motion.y);
 
         // if ((testRect.x < _mx && testRect.y < _my) && (testRect.x + testRect.w > _mx && testRect.y + testRect.h > _my))
         // {

@@ -28,7 +28,39 @@ int main(int argc, char *argv[])
   FILE *fp;
   fp = fopen("student.txt", "r+");
 
+  //파일 내용 연결리스트 만들기
+  {
+    char strBuf[32];
+    while (NULL != fgets(strBuf, sizeof(strBuf), fp)){
+      student *p = p_student;
+      while(p -> next != NULL){
+      p = p -> next;
+    }
+    p -> next = (student *)malloc(sizeof(student));
+    p = p -> next;
 
+    char *pszTemp;
+    //char szName[32];
+    int v_kor, v_eng, v_math;
+
+    const char *pszDelimiter = ",";
+    pszTemp = strtok(strBuf, pszDelimiter);
+    strcpy(p->name, pszTemp);
+
+    pszTemp = strtok(NULL, pszDelimiter);
+    v_kor = atoi(pszTemp);
+  
+    pszTemp = strtok(NULL, pszDelimiter);
+    v_eng = atoi(pszTemp);
+
+    pszTemp = strtok(NULL, pszDelimiter);
+    v_math = atoi(pszTemp);
+
+    p->kor = v_kor;
+    p->eng = v_eng;
+    p->math = v_math;
+    p -> next = NULL;
+  }
 
   SDL_bool bLoop = SDL_TRUE;
 
@@ -78,11 +110,12 @@ int main(int argc, char *argv[])
       fseek(fp, 0, SEEK_END);
       fprintf(fp, "\n%s,%d,%d,%d", p->name, p->kor, p->eng, p->math);
     }
-      break;
+    break;
 
     case '2': //삭제
     {
-      if (_count < 1){
+      if (_count < 1)
+      {
         printf("there's no people to remove\n");
         break;
       }
@@ -108,7 +141,7 @@ int main(int argc, char *argv[])
       }
       _count--;
     }
-      break;
+    break;
 
     case '3': // 수정
     {
@@ -129,12 +162,12 @@ int main(int argc, char *argv[])
         if (!strcmp(szName, name))
         {
           char v_name[32];
-          int v_kor, v_eng, v_math; 
+          int v_kor, v_eng, v_math;
           printf("input student info\n");
 
           printf("name : ");
           scanf("%s", v_name);
-        
+
           printf("korean : ");
           scanf(" %d", &v_kor);
 
