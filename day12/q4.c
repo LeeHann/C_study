@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
   p_student->next = NULL;
 
   FILE *fp;
-  fp = fopen("student.txt", "r+");
+  fp = fopen("student.txt", "r");
 
   //파일 내용 연결리스트 만들기
   {
@@ -65,6 +65,8 @@ int main(int argc, char *argv[])
       _count++;
     }
   }
+
+  fclose(fp);
 
   SDL_bool bLoop = SDL_TRUE;
 
@@ -106,11 +108,11 @@ int main(int argc, char *argv[])
 
       printf("mathmetics : ");
       scanf("%d", &p->math);
+      rewind(stdin);
 
       p->next = NULL;
-
-      fseek(fp, 0, SEEK_END);
-      fprintf(fp, "\n%s,%d,%d,%d", p->name, p->kor, p->eng, p->math);
+      //fseek(fp, 0, SEEK_END);
+      //fprintf(fp, "\n%s,%d,%d,%d", p->name, p->kor, p->eng, p->math);
     }
     break;
 
@@ -128,6 +130,7 @@ int main(int argc, char *argv[])
 
       printf("input name whom you want to remove : ");
       scanf("%s", name);
+      rewind(stdin);
 
       while (p != NULL)
       {
@@ -148,86 +151,88 @@ int main(int argc, char *argv[])
     case '3': // 수정
     {
       char name[32];
-      char strBuf[32];
       printf("input name you want to edit : ");
-      scanf("%s ", name);
+      scanf(" %s", name);
 
-      fseek(fp, 0, SEEK_SET);
-      while (NULL != fgets(strBuf, sizeof(strBuf), fp))
+      student *p = p_student;
+      while (NULL != p)
       {
-        char *pszTemp;
-        char szName[32];
-
-        const char *pszDelimiter = ",";
-        pszTemp = strtok(strBuf, pszDelimiter);
-        strcpy(szName, pszTemp);
-        if (!strcmp(szName, name))
+        if (!strcmp(p->name, name))
         {
-          char v_name[32];
-          int v_kor, v_eng, v_math;
-          printf("input student info\n");
+          printf("input edit info\n");
 
-          printf("name : ");
-          scanf("%s", v_name);
+          printf("student name : ");
+          scanf("%s", p->name);
 
           printf("korean : ");
-          scanf(" %d", &v_kor);
+          scanf(" %d", &p->kor);
 
           printf("english : ");
-          scanf("%d", &v_eng);
+          scanf("%d", &p->eng);
 
           printf("mathmetics : ");
-          scanf("%d", &v_math);
-
-          fprintf(fp, "\n%s,%d,%d,%d", v_name, v_kor, v_eng, v_math);
+          scanf("%d", &p->math);
+          rewind(stdin);
+          
+          break;
         }
+        p = p->next;
       }
     }
     break;
 
     case '4': // 총점
+    {
+      student *p = p_student;
+      while (p->next != NULL)
+      {
+        p = p->next;
+        int all =  p->kor + p->eng + p->math;
+        printf("%15s%3d%3d%3d result:%3d\n", p->name, p->kor, p->eng, p->math, all);
+      }
+    }
       break;
 
     case '5': // 평균
+    {
+      student *p = p_student;
+      while (p->next != NULL)
+      {
+        p = p->next;
+        int aver =  (p->kor + p->eng + p->math)/3;
+        printf("%15s%3d%3d%3d average:%3d\n", p->name, p->kor, p->eng, p->math, aver);
+      }
+    }
       break;
 
     case 'p':
     {
-      fseek(fp, 0, SEEK_SET);
-      char strBuf[32];
-      while (NULL != fgets(strBuf, sizeof(strBuf), fp))
+      student *p = p_student;
+      while (p->next != NULL)
       {
-        char *pszTemp;
-        char szName[32];
-        int kor, eng, math;
-
-        const char *pszDelimiter = ",";
-        pszTemp = strtok(strBuf, pszDelimiter);
-        strcpy(szName, pszTemp);
-
-        pszTemp = strtok(NULL, pszDelimiter);
-        kor = atoi(pszTemp);
-
-        pszTemp = strtok(NULL, pszDelimiter);
-        eng = atoi(pszTemp);
-
-        pszTemp = strtok(NULL, pszDelimiter);
-        math = atoi(pszTemp);
-
-        printf("%s %d %d %d\n", szName, kor, eng, math);
+        p = p->next;
+        printf("%15s%3d%3d%3d\n", p->name, p->kor, p->eng, p->math);
       }
     }
     break;
-
     case 'q':
       bLoop = SDL_FALSE;
       break;
-
     default:
       break;
     }
   }
 
-  fclose(fp);
+  student *p = p_student;
+
+  FILE *fo = fopen("student.txt", "w");
+  fseek(fp, 0, SEEK_SET);
+  while (NULL != p->next)
+  {
+    p = p->next;
+    fprintf(fp, "%s,%d,%d,%d\n", p->name, p->kor, p->eng, p->math);
+  }
+
+  fclose(fo);
   return 0;
 }
