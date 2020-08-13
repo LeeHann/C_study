@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
     }
   }
   
+  destoryButton(g_pExitButton);
   TTF_CloseFont(g_pFont);
 
   SDL_DestroyRenderer(g_pRenderer);

@@ -4,6 +4,7 @@
 #include <stdio.h>
 
 #include "../engine/text_lable.h"
+#include "../engine/button.h"
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -52,12 +53,22 @@ int main(int argc, char *argv[])
     printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
     return 0;
   }
-  else 
+  else
   {
     printf("font load ok!\n");
   }
 
-  S_TextLable *ptxLable = createLable(g_pRenderer,100,100,1,L"hello Lable 한글.",g_pFont);
+  void *pUiObjs[3];
+
+  pUiObjs[0] = createLable(g_pRenderer, 100, 100, 1, L"hello Lable 한글.0", g_pFont);
+  pUiObjs[1] = createLable(g_pRenderer, 100, 130, 2, L"hello Lable 한글.1", g_pFont);
+  //ptxLable[2] = createLable(g_pRenderer, 100, 160, 2, L"hello Lable 한글.2", g_pFont);
+  pUiObjs[2] = createButton(g_pRenderer,WINDOW_WIDTH / 2 - 60, WINDOW_HEIGHT / 2 - 16,
+                                   120, 32, 
+                                   1,
+                                   L"나가기",
+                                   g_pFont,
+                                   NULL);
 
   SDL_bool bLoop = SDL_TRUE;
   while (bLoop)
@@ -65,13 +76,27 @@ int main(int argc, char *argv[])
     SDL_SetRenderDrawColor(g_pRenderer, 0, 0, 0, 0xff);
     SDL_RenderClear(g_pRenderer);
 
-    TextLable_render(ptxLable,g_pRenderer);
-    
+    for (int i = 0; i < 3; i++)
+    {
+      int nType = ((S_TextLable *)pUiObjs[i])->m_nType;
+      if( nType == 1) {
+        ((S_TextLable *)pUiObjs[i])->m_fpRender(pUiObjs[i],g_pRenderer);
+      }
+      else if(nType == 2)
+      {
+        ((S_BUTTON *)pUiObjs[i])->m_fpRender(pUiObjs[i],g_pRenderer);
+      }
+
+      
+      //TextLable_render(ptxLable[i], g_pRenderer);
+    }
+
     SDL_RenderPresent(g_pRenderer);
 
     SDL_Event _event;
     while (SDL_PollEvent(&_event))
     {
+      // Button_DoEvent(pButton,&_event);
       switch (_event.type)
       {
       case SDL_KEYDOWN:
@@ -86,7 +111,23 @@ int main(int argc, char *argv[])
     }
   }
   
-  TextLable_destory(ptxLable);
+
+  for (int i = 0; i < 3; i++)
+  {
+    int nType = ((S_TextLable *)pUiObjs[i])->m_nType;
+
+    if(nType==1)
+    {
+      ((S_TextLable *)pUiObjs[i])->m_fpDestory(pUiObjs[i]);
+
+    }
+    else if(nType==2)
+    {
+      ((S_BUTTON *)pUiObjs[i])->m_fpDestory(pUiObjs[i]);
+    }
+    //TextLable_destory(ptxLable[i]);
+  }
+
   TTF_CloseFont(g_pFont);
   SDL_DestroyRenderer(g_pRenderer);
   SDL_DestroyWindow(g_pWindow);

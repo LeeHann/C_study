@@ -5,12 +5,29 @@
 
 #include "text_lable.h"
 
+void _destory(S_TextLable *pObj)
+{
+  SDL_DestroyTexture(pObj->m_pLableTxture);
+  SDL_free(pObj);
+}
+
+void _render(S_TextLable *pObj, SDL_Renderer *pRender)
+{
+  SDL_SetRenderDrawBlendMode(pRender, SDL_BLENDMODE_BLEND);
+
+  SDL_RenderCopy(pRender,pObj->m_pLableTxture,NULL,&pObj->m_Rect);
+
+  SDL_SetRenderDrawBlendMode(pRender, SDL_BLENDMODE_NONE);
+}
+
 S_TextLable *createLable(SDL_Renderer *pRenderer,
                          int x, int y, Uint16 nID,
                          const Uint16 *text,
                          TTF_Font *pFont)
 {
   S_TextLable *pObj = SDL_malloc(sizeof(S_TextLable));
+
+  pObj->m_nType = 1;
 
   pObj->m_Rect.x = x;
   pObj->m_Rect.y = y;
@@ -28,20 +45,9 @@ S_TextLable *createLable(SDL_Renderer *pRenderer,
 
     SDL_FreeSurface(textSurface);
   }
+
+  pObj->m_fpRender = _render;
+  pObj->m_fpDestory = _destory;
+
   return pObj;
-}
-
-void TextLable_destory(S_TextLable *pObj)
-{
-  SDL_DestroyTexture(pObj->m_pLableTxture);
-  SDL_free(pObj);
-}
-
-void TextLable_render(S_TextLable *pObj, SDL_Renderer *pRender)
-{
-  SDL_SetRenderDrawBlendMode(pRender, SDL_BLENDMODE_BLEND);
-
-  SDL_RenderCopy(pRender,pObj->m_pLableTxture,NULL,&pObj->m_Rect);
-
-  SDL_SetRenderDrawBlendMode(pRender, SDL_BLENDMODE_NONE);
 }
