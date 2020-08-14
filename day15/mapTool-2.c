@@ -1,8 +1,15 @@
+//불러온 맵을 저장된 다른 맵으로 교체하는 swap 버튼 (맵 선택지 3개)
+//맵 크기에 따라 캐릭터가 갈 수 있는 거리를 한정 짓기
+//맵 클리어 버튼
+
 #include <stdio.h>
+#include <string.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include <string.h>
+
+#include "../engine/ui/ui_base.h"
+#include "../engine/ui/button.h"
 
 int doTokenize(char *szBuf, char szBufToken[][32]);
 void putTile(SDL_Renderer *pRenderer, SDL_Texture *pTex, Uint16 _x, Uint16 _y, Uint16 _index);
@@ -12,12 +19,13 @@ const Uint16 WINDOW_HEIGHT = 480;
 
 SDL_Window *gWindow;
 SDL_Renderer *g_pRenderer;
-SDL_Texture *g_pTitleTexture;
-SDL_Texture *g_pChtrTexture;
-SDL_Texture *g_pButton;
-TTF_Font *g_pFont;
+SDL_Texture *g_pTileTexture;
 
-SDL_bool bLoop = SDL_TRUE;
+SDL_Texture *g_pChtrTexture;
+
+TTF_Font *g_pFont;
+S_BUTTON *g_pSwapButton;
+S_BUTTON *g_pClearButton;
 
 Uint16 g_worldMap_Layer_1[64];
 Uint16 g_nSelectTileIndex = 0;
@@ -64,6 +72,18 @@ void processCmd(char *_szCmd, SDL_bool *bLoop)
   }
 }
 
+void onPushClear(S_BUTTON *pBtn)
+{
+  for(int i=0; i<64; i++)
+    g_worldMap_Layer_1[i] = -1;
+}
+
+void onPushSwap(S_BUTTON *pBtn)
+{
+  onPushClear(&pBtn);
+  
+}
+
 int main(int argc, char *argv[])
 {
   for (int i = 0; i < 64; i++)
@@ -88,21 +108,8 @@ int main(int argc, char *argv[])
     surface = IMG_Load("../res/dungeontiles.png");
     SDL_Texture *tex = SDL_CreateTextureFromSurface(g_pRenderer, surface);
     SDL_FreeSurface(surface);
-    g_pTitleTexture = tex;
+    g_pTileTexture = tex;
   }
-
-  {
-    SDL_Color _whiteColor = {0xff, 0xff, 0xff, 0xff};
-    SDL_Color _blackColor = {0, 0, 0, 0x00};
-    SDL_Surface *textSurface = TTF_RenderUNICODE_Solid(g_pFont, L"SWAP", _whiteColor);
-
-    g_pButton = SDL_CreateTextureFromSurface(g_pRenderer, textSurface);
-    SDL_FreeSurface(textSurface);
-  }
-
-  static char strBuf[32] = {
-      0,
-  };
 
   //Initialize SDL_ttf
   if (TTF_Init() == -1)
@@ -140,19 +147,24 @@ int main(int argc, char *argv[])
   }
   SDL_Point _position = {0, 0};
 
+  g_pSwapButton = myui_createButton(g_pRenderer, 540, 400, 90, 40, 1, L"SWAP", g_pFont, onPushSwap);
+  g_pClearButton = myui_createButton(g_pRenderer, 430, 400, 100, 40, 2, L"CLEAR", g_pFont, onPushClear);
+
+  static char strBuf[32] = {0,};
+  SDL_bool bLoop = SDL_TRUE;
   while (bLoop)
   {
     SDL_SetRenderDrawColor(g_pRenderer, 0x00, 0x00, 0x00, 0xff);
     SDL_RenderClear(g_pRenderer);
 
     //select tile
-    putTile(g_pRenderer, g_pTitleTexture, 15, 0, g_nSelectTileIndex);
+    putTile(g_pRenderer, g_pTileTexture, 15, 0, g_nSelectTileIndex);
 
     //440,100
     {
       //pallete Rendering
       SDL_Rect _dstRt = {440, 100, 48 * 4, 72 * 4};
-      SDL_RenderCopy(g_pRenderer, g_pTitleTexture, NULL, &_dstRt);
+      SDL_RenderCopy(g_pRenderer, g_pTileTexture, NULL, &_dstRt);
     }
 
     //render world map
@@ -162,7 +174,7 @@ int main(int argc, char *argv[])
         int _index = g_worldMap_Layer_1[i];
         if (_index != -1)
         {
-          putTile(g_pRenderer, g_pTitleTexture, i % 8, i / 8, _index);
+          putTile(g_pRenderer, g_pTileTexture, i % 8, i / 8, _index);
         }
       }
     }
@@ -172,6 +184,9 @@ int main(int argc, char *argv[])
       SDL_Rect dstRt = {_position.x * 32, _position.y * 32, 16 * 2, 16 * 2};
       SDL_RenderCopy(g_pRenderer, g_pChtrTexture, &srcRt, &dstRt);
     }
+    //swap button Rendering
+    g_pSwapButton->m_base.m_fpRender(g_pSwapButton, g_pRenderer);
+    g_pClearButton->m_base.m_fpRender(g_pClearButton, g_pRenderer);
 
     // for multiple rendering
     SDL_RenderPresent(g_pRenderer);
@@ -179,27 +194,21 @@ int main(int argc, char *argv[])
     SDL_Event _event;
     while (SDL_PollEvent(&_event))
     {
+      g_pSwapButton->m_base.m_fpDoEvent(g_pSwapButton, &_event);
+      g_pClearButton->m_base.m_fpDoEvent(g_pClearButton, &_event);
       switch (_event.type)
       {
-      case SDL_MOUSEMOTION:
-      {
-        //printf("%4d%4d\r", _event.motion.x, _event.motion.y);
-      }
-      break;
       case SDL_MOUSEBUTTONDOWN:
       {
         printf("%8d\r", _event.button.button);
-        if (_event.button.button == 1)
+        if (_event.button.button == 1) //좌클릭
         { //팔레트 처리
           {
             int _x = (_event.motion.x - 440) / 32;
             int _y = (_event.motion.y - 100) / 32;
 
             if ((_x >= 0 && _y >= 0) && (_x < 6 && _y < 9))
-            {
               g_nSelectTileIndex = _y * 6 + _x;
-            }
-            //printf("%4d%4d\r", _x, _y);
           }
           //월드맵 처리
           {
@@ -210,7 +219,6 @@ int main(int argc, char *argv[])
             {
               int _tileIndex = _y * 8 + _x;
               g_worldMap_Layer_1[_tileIndex] = g_nSelectTileIndex;
-              //printf("%4d%4d%4d\r", _x, _y, _tileIndex);
             }
           }
         }
@@ -226,28 +234,17 @@ int main(int argc, char *argv[])
           }
         }
       }
+      break;
       case SDL_KEYDOWN:
         if (_event.key.keysym.scancode == 82) //up
-        {
-          if(_position.y > 0)
-            _position.y -= 1;
-        }
+          if(_position.y > 0) _position.y -= 1;
         else if (_event.key.keysym.scancode == 81) //down
-        {
-          if(_position.y <= 6)
-            _position.y += 1;
-        }
+          if(_position.y <= 6) _position.y += 1;
         else if (_event.key.keysym.scancode == 80) //left
-        {
-          if(_position.x > 0)
-            _position.x -= 1;
-        }
+          if(_position.x > 0) _position.x -= 1;
         else if (_event.key.keysym.scancode == 79) //right
-        {
-          if(_position.x <= 6)
-            _position.x += 1;
-        }
-
+          if(_position.x <= 6) _position.x += 1;
+      
         if (_event.key.keysym.sym == SDLK_RETURN)
         {
           if (nInputFSM == 0)
@@ -292,9 +289,12 @@ int main(int argc, char *argv[])
     }
   }
 
+  g_pClearButton->m_base.m_fpDestory(g_pClearButton);
+  g_pSwapButton->m_base.m_fpDestory(g_pSwapButton);
+
   SDL_DestroyTexture(g_pChtrTexture);
   TTF_CloseFont(g_pFont);
-  SDL_DestroyTexture(g_pTitleTexture);
+  SDL_DestroyTexture(g_pTileTexture);
   SDL_DestroyRenderer(g_pRenderer);
   SDL_DestroyWindow(gWindow);
   SDL_Quit();

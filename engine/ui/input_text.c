@@ -29,9 +29,9 @@ static void _render(void *_pObj, SDL_Renderer *pRender)
   SDL_RenderFillRect(pRender, &pInput->m_Rect);
 
   //전경 텍스트
-  if(strlen(pInput->m_szBuf) > 0)
+  if (strlen(pInput->m_szBuf) > 0)
   {
-    SDL_Surface *textSurface = TTF_RenderText_Solid(pInput->m_pFont, 
+    SDL_Surface *textSurface = TTF_RenderText_Solid(pInput->m_pFont,
                                                     pInput->m_szBuf, pInput->m_fgColor);
     pInput->m_pTextTxture = SDL_CreateTextureFromSurface(pRender, textSurface);
 
@@ -40,13 +40,13 @@ static void _render(void *_pObj, SDL_Renderer *pRender)
 
     SDL_FreeSurface(textSurface);
   }
-  if(pInput->m_pTextTxture)
+  if (pInput->m_pTextTxture)
   {
-  SDL_Rect _dstRect = {pInput->m_Rect.x, pInput->m_Rect.y,
-                       pInput->m_textSize.x, pInput->m_textSize.y};
-  SDL_RenderCopy(pRender, pInput->m_pTextTxture, NULL, &_dstRect);
-  SDL_DestroyTexture(pInput->m_pTextTxture);
-  pInput->m_pTextTxture = NULL;
+    SDL_Rect _dstRect = {pInput->m_Rect.x, pInput->m_Rect.y,
+                         pInput->m_textSize.x, pInput->m_textSize.y};
+    SDL_RenderCopy(pRender, pInput->m_pTextTxture, NULL, &_dstRect);
+    SDL_DestroyTexture(pInput->m_pTextTxture);
+    pInput->m_pTextTxture = NULL;
   }
 }
 

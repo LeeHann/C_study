@@ -82,7 +82,6 @@ int main(int argc, char *argv[])
       switch (_event.type)
       {
       case SDL_KEYDOWN:
-        //printf("%d \n", _event.key.keysym.scancode);
         break;
       case SDL_QUIT:
         bLoop = SDL_FALSE;
