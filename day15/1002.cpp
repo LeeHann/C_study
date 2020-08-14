@@ -26,13 +26,13 @@ int main(){
     }
     else if(r1_r2 > length){
       //내접
-      
+      if((max(r1, r2)-length) == min(r1, r2))
+        cout << 1 << "\n";
       //겹치기
       cout << 2 << "\n";//2점에서 만난다
-    
     }
-    else if(r1_r2 == length) cout << 1 << "\n"; //1점에서 만난다
-    else if(r1_r2 < length) cout << 0 << "\n";  //만나지 않는다
+    else if(r1_r2 == length) cout << 1 << "\n"; //외접, 1점에서 만난다
+    else if(r1_r2 < length) cout << 0 << "\n";  //밖에서, 만나지 않는다
   }
   return 0;
 }

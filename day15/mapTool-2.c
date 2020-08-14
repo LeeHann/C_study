@@ -80,8 +80,20 @@ void onPushClear(S_BUTTON *pBtn)
 
 void onPushSwap(S_BUTTON *pBtn)
 {
-  onPushClear(&pBtn);
-  
+  onPushClear(pBtn);
+  static SDL_bool map = SDL_TRUE;
+  if(map){
+    SDL_RWops *rw = SDL_RWFromFile("bridge.map", "rb");
+    SDL_RWread(rw, g_worldMap_Layer_1, sizeof(Uint16), 64);
+    SDL_RWclose(rw);
+    map = SDL_FALSE;
+  } 
+  else{
+    SDL_RWops *rw = SDL_RWFromFile("drwMap.map", "rb");
+    SDL_RWread(rw, g_worldMap_Layer_1, sizeof(Uint16), 64);
+    SDL_RWclose(rw);
+    map = SDL_TRUE;
+  }
 }
 
 int main(int argc, char *argv[])
@@ -237,13 +249,13 @@ int main(int argc, char *argv[])
       break;
       case SDL_KEYDOWN:
         if (_event.key.keysym.scancode == 82) //up
-          if(_position.y > 0) _position.y -= 1;
+          {if(_position.y > 0) _position.y -= 1;}
         else if (_event.key.keysym.scancode == 81) //down
-          if(_position.y <= 6) _position.y += 1;
+          {if(_position.y <= 6) _position.y += 1;}
         else if (_event.key.keysym.scancode == 80) //left
-          if(_position.x > 0) _position.x -= 1;
+          {if(_position.x > 0) _position.x -= 1;}
         else if (_event.key.keysym.scancode == 79) //right
-          if(_position.x <= 6) _position.x += 1;
+          {if(_position.x <= 6) _position.x += 1;}
       
         if (_event.key.keysym.sym == SDLK_RETURN)
         {
