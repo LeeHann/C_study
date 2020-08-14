@@ -3,9 +3,11 @@
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
+#include "ui_base.h"
 #include "text_lable.h"
 
-void _destory(void *_pObj)
+
+static void _destory(void *_pObj)
 {
   S_TextLable *pObj = _pObj;
 
@@ -13,7 +15,7 @@ void _destory(void *_pObj)
   SDL_free(pObj);
 }
 
-void _render(void *_pObj, SDL_Renderer *pRender)
+static void _render(void *_pObj, SDL_Renderer *pRender)
 {
   S_TextLable *pObj = _pObj;
   SDL_SetRenderDrawBlendMode(pRender, SDL_BLENDMODE_BLEND);
@@ -23,18 +25,18 @@ void _render(void *_pObj, SDL_Renderer *pRender)
   SDL_SetRenderDrawBlendMode(pRender, SDL_BLENDMODE_NONE);
 }
 
-S_TextLable *createLable(SDL_Renderer *pRenderer,
+S_TextLable *myui_createLable(SDL_Renderer *pRenderer,
                          int x, int y, Uint16 nID,
                          const Uint16 *text,
                          TTF_Font *pFont)
 {
   S_TextLable *pObj = SDL_malloc(sizeof(S_TextLable));
 
-  pObj->m_nType = 1;
+  pObj->m_base.m_nType = MYUI_TEXT_LABLE;
+  pObj->m_base.m_nID = nID;
 
   pObj->m_Rect.x = x;
   pObj->m_Rect.y = y;
-  pObj->m_nID = nID;
 
   //라벨생성
   {
@@ -49,8 +51,8 @@ S_TextLable *createLable(SDL_Renderer *pRenderer,
     SDL_FreeSurface(textSurface);
   }
 
-  pObj->m_fpRender = _render;
-  pObj->m_fpDestory = _destory;
+  pObj->m_base.m_fpRender = _render;
+  pObj->m_base.m_fpDestory = _destory;
 
   return pObj;
 }
