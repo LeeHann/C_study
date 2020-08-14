@@ -15,7 +15,7 @@ typedef struct
   SDL_Color m_color;
 } _S_MyRect;
 
-int doTokenize(char *szBuf, char szBufToken[8][32]);
+int doTokenize(char *szBuf, char (*szBufToken)[32]);
 
 int main(int argc, char *argv[])
 {
@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  Mix_Music *music = Mix_LoadMUS("../res/nj4_2.ogg");
+  Mix_Music *music = Mix_LoadMUS("../adv/sdl/res/nj4_2.ogg");
 
   if (!music)
   {
@@ -89,6 +89,7 @@ int main(int argc, char *argv[])
       case SDL_TEXTINPUT:
       {
         strcat(strBuf, _event.text.text);
+        printf("%s \r", strBuf);
       }
       break;
       case SDL_KEYDOWN:
@@ -97,14 +98,14 @@ int main(int argc, char *argv[])
         {
           if (nInputFSM == 0)
           {
-            printf("input msg : ");
+            printf("input msg : \n");
             SDL_StartTextInput();
             nInputFSM = 1;
           }
           else if (nInputFSM == 1)
           {
             //입력완료
-            static char szTokens[8][32];
+            static char szTokens[16][32];
             int _numToken = doTokenize(strBuf, szTokens);
 
             if (!strcmp(szTokens[0], "quit"))
@@ -112,7 +113,8 @@ int main(int argc, char *argv[])
               bLoop = SDL_FALSE;
             }
             else if (!strcmp(szTokens[0], "dr"))
-            { //dr 100 100 120 120 255 0 0 255
+            {
+              //dr 100 100 120 120 255 0 0 255
               //dr x y w h r g b a
               SDL_Rect _rt = {atoi(szTokens[1]), atoi(szTokens[2]),
                               atoi(szTokens[3]), atoi(szTokens[4])};
@@ -129,14 +131,16 @@ int main(int argc, char *argv[])
               pColor->b = b;
               pColor->a = a;
               _rect_count++;
-
-              nInputFSM = 0;
-              SDL_StopTextInput();
             }
             else if (!strcmp(szTokens[0], "pl"))
             {
               Mix_PlayMusic(music, -1);
             }
+
+            //clear 
+            strBuf[0] = 0x00;
+            nInputFSM = 0;
+            SDL_StopTextInput();
           }
 
           break;
@@ -145,6 +149,16 @@ int main(int argc, char *argv[])
           break;
         default:
           break;
+        }
+        else if (_event.key.keysym.sym == SDLK_BACKSPACE)
+        {
+          int _count = strlen(strBuf);
+          if (_count > 0) //버퍼에 값이 존재 할때만...
+          {
+            _count--;
+            strBuf[_count] = 0x00;
+            printf("%s \r", strBuf);
+          }
         }
       }
     }

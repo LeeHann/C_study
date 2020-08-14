@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <string.h>
 
 int doTokenize(char *szBuf, char szBufToken[][32]);
@@ -12,6 +13,10 @@ const Uint16 WINDOW_HEIGHT = 480;
 SDL_Window *gWindow;
 SDL_Renderer *g_pRenderer;
 SDL_Texture *g_pTitleTexture;
+SDL_Texture *g_pButton;
+TTF_Font *g_pFont;
+
+SDL_bool bLoop = SDL_TRUE;
 
 Uint16 g_worldMap_Layer_1[64];
 Uint16 g_nSelectTileIndex = 0;
@@ -69,8 +74,8 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  gWindow = SDL_CreateWindow("GAME",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WINDOW_WIDTH,WINDOW_HEIGHT,0);
-  
+  gWindow = SDL_CreateWindow("GAME", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
+
   if (!gWindow)
   {
     printf("error initializing SDL window: %s\n", SDL_GetError());
@@ -84,12 +89,47 @@ int main(int argc, char *argv[])
     SDL_FreeSurface(surface);
     g_pTitleTexture = tex;
   }
+
+  {
+    SDL_Color _whiteColor = {0xff, 0xff, 0xff, 0xff};
+    SDL_Color _blackColor = {0, 0, 0, 0x00};
+    SDL_Surface *textSurface = TTF_RenderUNICODE_Solid(g_pFont, L"SWAP", _whiteColor);
+
+    g_pButton = SDL_CreateTextureFromSurface(g_pRenderer, textSurface);
+    SDL_FreeSurface(textSurface);
+  }
+
   static char strBuf[32] = {
       0,
   };
 
+  //Initialize SDL_ttf
+  if (TTF_Init() == -1)
+  {
+    printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+    return 0;
+  }
+  else
+  {
+    printf("SDL_ttf initialize Ok!  \n");
+  }
+
+  //LOAD font file
+  g_pFont = TTF_OpenFont("../../adv/sdl/res/nmf.ttf", 28);
+
+  if (!g_pFont)
+  {
+    printf("font file load error");
+    printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+    return 0;
+  }
+  else
+  {
+    printf("font load ok!\n");
+  }
+
   int nTileIndex = 0;
-  SDL_bool bLoop = SDL_TRUE;
+
   int nInputFSM = 0; //0 -> ready , 1-> text input
 
   //processCmd("setTile 0 0 1", NULL);
@@ -97,8 +137,8 @@ int main(int argc, char *argv[])
   //processCmd("setTile 2 0 1", NULL);
 
   while (bLoop)
-  {    
-    SDL_SetRenderDrawColor(g_pRenderer, 0x00, 0x00, 0x00, 0x00);
+  {
+    SDL_SetRenderDrawColor(g_pRenderer, 0x00, 0x00, 0x00, 0xff);
     SDL_RenderClear(g_pRenderer);
 
     //select tile
@@ -181,7 +221,7 @@ int main(int argc, char *argv[])
         {
           if (nInputFSM == 0)
           {
-            printf("input msg : ");
+            printf("input msg : \n");
             SDL_StartTextInput();
             nInputFSM = 1;
           }
@@ -195,10 +235,21 @@ int main(int argc, char *argv[])
             nInputFSM = 0;
           }
         }
+        else if (_event.key.keysym.sym == SDLK_BACKSPACE)
+        {
+          int _count = strlen(strBuf);
+          if (_count > 0) //버퍼에 값이 존재 할때만...
+          {
+            _count--;
+            strBuf[_count] = 0x00;
+            printf("%s \r", strBuf);
+          }
+        }
         break;
       case SDL_TEXTINPUT:
       {
         strcat(strBuf, _event.text.text);
+        printf("%s \r", strBuf);
       }
       break;
       case SDL_QUIT:
@@ -210,6 +261,7 @@ int main(int argc, char *argv[])
     }
   }
 
+  TTF_CloseFont(g_pFont);
   SDL_DestroyTexture(g_pTitleTexture);
   SDL_DestroyRenderer(g_pRenderer);
 

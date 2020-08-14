@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
     static char strBuf[32] = {
         0,
     };
+
     SDL_Event _event;
     while (SDL_PollEvent(&_event))
     {
@@ -74,7 +75,6 @@ int main(int argc, char *argv[])
       {
       case SDL_TEXTINPUT:
       {
-        rewind(stdin);
         strcat(strBuf, _event.text.text);
         printf("%s \r", strBuf);
       }
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
         {
           if (nInputFSM == 0)
           {
-            printf("input msg : ");
+            printf("input msg : \n");
             SDL_StartTextInput();
             nInputFSM = 1;
           }
@@ -122,30 +122,59 @@ int main(int argc, char *argv[])
               SDL_StopTextInput();
             }
             else if (!strcmp(szTokens[0], "ed")){ //편집
-              // ed x y w h r g b a
-              SDL_Rect _rt = {atoi(szTokens[1]), atoi(szTokens[2]),
-                              atoi(szTokens[3]), atoi(szTokens[4])};
-              Uint8 r = atoi(szTokens[5]);
-              Uint8 g = atoi(szTokens[6]);
-              Uint8 b = atoi(szTokens[7]);
-              Uint8 a = atoi(szTokens[8]);
-
-
+              // ed num x y w h r g b a
+              int num = atoi(szTokens[1]);
+              SDL_Rect _rt = {atoi(szTokens[2]), atoi(szTokens[3]),
+                              atoi(szTokens[4]), atoi(szTokens[5])};
+              Uint8 r = atoi(szTokens[6]);
+              Uint8 g = atoi(szTokens[7]);
+              Uint8 b = atoi(szTokens[8]);
+              Uint8 a = atoi(szTokens[9]);
+              
+              SDL_Rect *pRect = &_rects[num];
+              *pRect = _rt;
+              SDL_Color *pColor = &_rect_colors[num];
+              pColor->r = r;
+              pColor->g = g;
+              pColor->b = b;
+              pColor->a = a;
             }
             else if (!strcmp(szTokens[0], "rm")){ //삭제
               // rm num
               int num = atoi(szTokens[1]);
 
               SDL_Rect _rt = {0,0,0,0};
-              _rects[num] = _rt;
+              SDL_Rect *pRect = &_rects[num];
+              *pRect = _rt;
+
+              SDL_Color *pColor = &_rect_colors[num];
+              pColor->r = 0x00;
+              pColor->g = 0x00;
+              pColor->b = 0x00;
+              pColor->a = 0x00;
             }
+            //clear 
+            strBuf[0] = 0x00;
+            nInputFSM = 0;
+            SDL_StopTextInput();
           }
+
           break;
         case SDL_QUIT:
           bLoop = SDL_FALSE;
           break;
         default:
           break;
+        }
+        else if (_event.key.keysym.sym == SDLK_BACKSPACE)
+        {
+          int _count = strlen(strBuf);
+          if (_count > 0) //버퍼에 값이 존재 할때만...
+          {
+            _count--;
+            strBuf[_count] = 0x00;
+            printf("%s \r", strBuf);
+          }
         }
       }
     }

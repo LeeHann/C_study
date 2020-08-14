@@ -21,4 +21,4 @@ ex09 : ex09.c
 ex10 : ex10.c ../engine/parser.c ../engine/tile.c
 	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
 mapTool : mapTool.c ../engine/parser.c ../engine/tile.c
-	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
+	gcc -o $@.exe $^ -lmingw32 -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
