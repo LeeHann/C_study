@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
   }
 
 //삭제
-  tDE_graph_remove_node(pFindNode, pFindNode->m_pParent);
+  tDE_graph_remove_node(pFindNode);
   
   printf("--------------------------------------\n");
   tDE_graph_Traverse(NULL, callBackTraverse, NULL);

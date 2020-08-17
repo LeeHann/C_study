@@ -99,7 +99,7 @@ tDE_S_Node *tDE_graph_FindNodeById(tDE_S_Node *pRoot, Uint32 nID)
   return NULL;
 }
 
-void tDE_graph_remove_node(tDE_S_Node *pNode, tDE_S_Node *pParent)
+void tDE_graph_remove_node(tDE_S_Node *pNode)
 {
   tDE_S_Node *prev = pNode->m_pPrev;
   tDE_S_Node *next = pNode->m_pNext;

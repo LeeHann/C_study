@@ -32,4 +32,8 @@ typedef struct _tde_s_base_
 
 } tDE_S_ObjectBase;
 
+tDE_S_Core *tDE_setup_1(const char *szTitle, int window_width, int window_height, Uint32 flags);
+void tDE_closeCore(tDE_S_Core *pCore);
+SDL_Texture *tDE_util_loadTexture(tDE_S_Core *pCore, const char *filename);
+
 #endif

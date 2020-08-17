@@ -20,7 +20,16 @@ static void _doEvent(void *pObj, SDL_Event *pEvt)
   {
   case SDL_MOUSEBUTTONDOWN:
     if (pEnty->m_callbackMouseDown)
-      pEnty->m_callbackMouseDown(pEnty);
+    {
+      SDL_Point mspt = {pEvt->motion.x, pEvt->motion.y};
+      SDL_Rect bodyRect = {
+          pEnty->m_ptPos.x, pEnty->m_ptPos.y, pEnty->m_srcRect.w, pEnty->m_srcRect.h};
+
+      if (SDL_PointInRect(&mspt, &bodyRect))
+      {
+        pEnty->m_callbackMouseDown(pEnty);
+      }
+    }
     break;
   default:
     break;
@@ -30,15 +39,15 @@ static void _doEvent(void *pObj, SDL_Event *pEvt)
 tDE_S_ObjectBase *tDE_Entity_createSprite(int x, int y, Uint16 nID,
                                           SDL_Rect srcRect,
                                           SDL_Texture *pTexture,
-                                          void(*callbackMouseDown)(void *),
-                                          void(*callbackKeyDown)(void *),
-                                          void(*callbackJoystick)(void *))
+                                          void (*callbackMouseDown)(void *),
+                                          void (*callbackKeyDown)(void *),
+                                          void (*callbackJoystick)(void *))
 {
   tDE_Entity_S_Sprite *pObj = SDL_malloc(sizeof(tDE_Entity_S_Sprite));
-  
+
   pObj->m_pTexture = pTexture;
   pObj->m_srcRect = srcRect;
-  
+
   pObj->m_ptPos.x = x;
   pObj->m_ptPos.y = y;
 
@@ -46,7 +55,7 @@ tDE_S_ObjectBase *tDE_Entity_createSprite(int x, int y, Uint16 nID,
   pObj->m_base.m_fpDestory = _destroy;
   pObj->m_base.m_fpDoEvent = _doEvent;
   pObj->m_base.m_fpRender = _render;
-  
+
   pObj->m_callbackMouseDown = callbackMouseDown;
   return (void *)pObj;
 }
