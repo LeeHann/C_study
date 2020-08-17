@@ -86,13 +86,13 @@ void onPushSwap(S_BUTTON *pBtn)
   onPushClear(pBtn);
   static SDL_bool map = SDL_TRUE;
   if(map){
-    SDL_RWops *rw = SDL_RWFromFile("bridge.map", "rb");
+    SDL_RWops *rw = SDL_RWFromFile("../../map/bridge.map", "rb");
     SDL_RWread(rw, g_worldMap_Layer_1, sizeof(Uint16), 64);
     SDL_RWclose(rw);
     map = SDL_FALSE;
   } 
   else{
-    SDL_RWops *rw = SDL_RWFromFile("drwMap.map", "rb");
+    SDL_RWops *rw = SDL_RWFromFile("../../map/drwMap.map", "rb");
     SDL_RWread(rw, g_worldMap_Layer_1, sizeof(Uint16), 64);
     SDL_RWclose(rw);
     map = SDL_TRUE;
