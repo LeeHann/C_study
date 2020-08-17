@@ -2,6 +2,8 @@
 //맵 크기에 따라 캐릭터가 갈 수 있는 거리를 한정 짓기
 //맵 클리어 버튼
 
+//드래그로 맵 그리기
+
 #include <stdio.h>
 #include <string.h>
 #include <SDL2/SDL.h>
