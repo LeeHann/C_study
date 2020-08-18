@@ -77,7 +77,7 @@ void processCmd(char *_szCmd, SDL_bool *bLoop)
 
 void onPushClear(S_BUTTON *pBtn)
 {
-  for(int i=0; i<64; i++)
+  for (int i = 0; i < 64; i++)
     g_worldMap_Layer_1[i] = -1;
 }
 
@@ -85,13 +85,15 @@ void onPushSwap(S_BUTTON *pBtn)
 {
   onPushClear(pBtn);
   static SDL_bool map = SDL_TRUE;
-  if(map){
+  if (map)
+  {
     SDL_RWops *rw = SDL_RWFromFile("../../map/bridge.map", "rb");
     SDL_RWread(rw, g_worldMap_Layer_1, sizeof(Uint16), 64);
     SDL_RWclose(rw);
     map = SDL_FALSE;
-  } 
-  else{
+  }
+  else
+  {
     SDL_RWops *rw = SDL_RWFromFile("../../map/drwMap.map", "rb");
     SDL_RWread(rw, g_worldMap_Layer_1, sizeof(Uint16), 64);
     SDL_RWclose(rw);
@@ -165,8 +167,13 @@ int main(int argc, char *argv[])
   g_pSwapButton = myui_createButton(g_pRenderer, 540, 400, 90, 40, 1, L"SWAP", g_pFont, onPushSwap);
   g_pClearButton = myui_createButton(g_pRenderer, 430, 400, 100, 40, 2, L"CLEAR", g_pFont, onPushClear);
 
-  static char strBuf[32] = {0,};
+  static char strBuf[32] = {
+      0,
+  };
   SDL_bool bLoop = SDL_TRUE;
+  SDL_bool bDrag_l = SDL_FALSE;
+  SDL_bool bDrag_r = SDL_FALSE;
+
   while (bLoop)
   {
     SDL_SetRenderDrawColor(g_pRenderer, 0x00, 0x00, 0x00, 0xff);
@@ -194,7 +201,7 @@ int main(int argc, char *argv[])
       }
     }
 
-    {//chracter Rect
+    { //chracter Rect
       SDL_Rect srcRt = {16, 0, 16, 16};
       SDL_Rect dstRt = {_position.x * 32, _position.y * 32, 16 * 2, 16 * 2};
       SDL_RenderCopy(g_pRenderer, g_pChtrTexture, &srcRt, &dstRt);
@@ -207,6 +214,23 @@ int main(int argc, char *argv[])
     SDL_RenderPresent(g_pRenderer);
 
     SDL_Event _event;
+
+    //월드맵 처리
+    int _x = (_event.motion.x) / 32;
+    int _y = (_event.motion.y) / 32;
+    int _tileIndex = _y * 8 + _x;
+
+    if (bDrag_l)
+    {
+      if (_x < 8 && _y < 8)
+        g_worldMap_Layer_1[_tileIndex] = g_nSelectTileIndex;
+    }
+    if (bDrag_r)
+    {
+      if (_x < 8 && _y < 8)
+        g_worldMap_Layer_1[_tileIndex] = -1;
+    }
+
     while (SDL_PollEvent(&_event))
     {
       g_pSwapButton->m_base.m_fpDoEvent(g_pSwapButton, &_event);
@@ -217,49 +241,51 @@ int main(int argc, char *argv[])
       {
         printf("%8d\r", _event.button.button);
         if (_event.button.button == 1) //좌클릭
-        { //팔레트 처리
+        {                              //팔레트 처리
           {
-            int _x = (_event.motion.x - 440) / 32;
-            int _y = (_event.motion.y - 100) / 32;
+            int _x1 = (_event.motion.x - 440) / 32;
+            int _y1 = (_event.motion.y - 100) / 32;
 
-            if ((_x >= 0 && _y >= 0) && (_x < 6 && _y < 9))
-              g_nSelectTileIndex = _y * 6 + _x;
+            if ((_x1 >= 0 && _y1 >= 0) && (_x1 < 6 && _y1 < 9))
+              g_nSelectTileIndex = _y1 * 6 + _x1;
           }
-          //월드맵 처리
-          {
-            int _x = (_event.motion.x) / 32;
-            int _y = (_event.motion.y) / 32;
-
-            if (_x < 8 && _y < 8)
-            {
-              int _tileIndex = _y * 8 + _x;
-              g_worldMap_Layer_1[_tileIndex] = g_nSelectTileIndex;
-            }
-          }
+          bDrag_l = SDL_TRUE;
         }
         else if (_event.button.button == 3) //우클릭
         {
-          int _x = (_event.motion.x) / 32;
-          int _y = (_event.motion.y) / 32;
-
-          if (_x < 8 && _y < 8)
-          {
-            int _tileIndex = _y * 8 + _x;
-            g_worldMap_Layer_1[_tileIndex] = -1;
-          }
+          bDrag_r = SDL_TRUE;
         }
       }
       break;
+      case SDL_MOUSEBUTTONUP:
+        if (_event.button.button == 1)
+          bDrag_l = SDL_FALSE;
+        else if (_event.button.button == 3)
+          bDrag_r = SDL_FALSE;
+        break;
+
       case SDL_KEYDOWN:
         if (_event.key.keysym.scancode == 82) //up
-          {if(_position.y > 0) _position.y -= 1;}
+        {
+          if (_position.y > 0)
+            _position.y -= 1;
+        }
         else if (_event.key.keysym.scancode == 81) //down
-          {if(_position.y <= 6) _position.y += 1;}
+        {
+          if (_position.y <= 6)
+            _position.y += 1;
+        }
         else if (_event.key.keysym.scancode == 80) //left
-          {if(_position.x > 0) _position.x -= 1;}
+        {
+          if (_position.x > 0)
+            _position.x -= 1;
+        }
         else if (_event.key.keysym.scancode == 79) //right
-          {if(_position.x <= 6) _position.x += 1;}
-      
+        {
+          if (_position.x <= 6)
+            _position.x += 1;
+        }
+
         if (_event.key.keysym.sym == SDLK_RETURN)
         {
           if (nInputFSM == 0)
@@ -281,7 +307,7 @@ int main(int argc, char *argv[])
         else if (_event.key.keysym.sym == SDLK_BACKSPACE)
         {
           int _count = strlen(strBuf);
-          if (_count > 0) //버퍼에 값이 존재 할때만...
+          if (_count > 0)
           {
             _count--;
             strBuf[_count] = 0x00;
