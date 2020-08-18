@@ -15,8 +15,8 @@ typedef struct __core
   SDL_Window *m_pWin;
   SDL_Renderer *m_pRender;
   TTF_Font *m_pDefaultFont;
-  Uint16 _ScreenWidth;
-  Uint16 _ScreenHeight;
+  Uint16 m_ScreenWidth;
+  Uint16 m_ScreenHeight;
 } tDE_S_Core;
 
 typedef struct _tde_s_base_
@@ -32,8 +32,15 @@ typedef struct _tde_s_base_
 
 } tDE_S_ObjectBase;
 
+typedef struct __s_sheet_data
+{
+  char szName[32];
+  SDL_Rect m_area;
+} tDE_S_SheetData;
+
 tDE_S_Core *tDE_setup_1(const char *szTitle, int window_width, int window_height, Uint32 flags);
 void tDE_closeCore(tDE_S_Core *pCore);
 SDL_Texture *tDE_util_loadTexture(tDE_S_Core *pCore, const char *filename);
+SDL_bool tDE_util_parseSheet(char *szStr, tDE_S_SheetData *pData);
 
 #endif
