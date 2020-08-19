@@ -8,6 +8,8 @@ SDL_Texture *g_pTileSet;
 Sint16 g_worldMap_Layer_1[64];
 Uint16 g_nSelectTileIndex = 0;
 
+SDL_bool g_bDrawGrid = SDL_TRUE;
+
 int main(int argc, char *argv[])
 {
   for (int i = 0; i < 64; i++)
@@ -58,6 +60,19 @@ int main(int argc, char *argv[])
         {
           putTile(pRender, g_pTileSet, i % 8, i / 8, _index, 16, 5, 2);
         }
+      }
+      //grid
+      if(g_bDrawGrid) {
+        for (int ix = 0; ix < 8; ix++)
+          {
+            SDL_SetRenderDrawColor(pRender, 0xff, 0xff, 0x00, 0xff);
+            SDL_RenderDrawLine(pRender, ix*32, 0, ix*32, 256);
+          }
+        for (int iy = 0; iy < 8; iy++)
+          {
+            SDL_SetRenderDrawColor(pRender, 0xff, 0xff, 0x00, 0xff);
+            SDL_RenderDrawLine(pRender, 0, iy*32, 256, iy*32);
+          }
       }
     }
 
@@ -117,44 +132,49 @@ int main(int argc, char *argv[])
       }
       break;
       case SDL_KEYDOWN:
+      {
+        switch (nInputFSM)
         {
-          switch (nInputFSM)
+        case 0: //대기상태
+        {
+          if (_event.key.keysym.sym == SDLK_RETURN)
           {
-          case 0: //대기상태
-          {
-            if (_event.key.keysym.sym == SDLK_RETURN)
-            {
-              printf("input cmd => \n");
-              nInputFSM = 1; //입력 상태로 전이
-            }
+            printf("input cmd => \n");
+            nInputFSM = 1; //입력 상태로 전이
           }
-          break;
-          case 1: //입력 상태
+          else if(_event.key.keysym.sym == SDLK_g)
           {
-
-            if (_event.key.keysym.sym == SDLK_RETURN)
-            {
-              nInputFSM = 0; //대기 상태로 전이
-              //cmd parser
-              {
-                parseCmd(szBuf);
-              }
-
-              szBuf[0] = 0x00; //문자열 클리어
-            }
-            else if (_event.key.keysym.sym == SDLK_BACKSPACE)
-            {
-              int _len = strlen(szBuf);
-              szBuf[_len - 1] = 0x00;
-              printf("%s  \r", szBuf);
-            }
-          }
-          break;
-          default:
-            break;
+            g_bDrawGrid = !g_bDrawGrid;
           }
         }
         break;
+        case 1: //입력 상태
+        {
+
+          if (_event.key.keysym.sym == SDLK_RETURN)
+          {
+            nInputFSM = 0; //대기 상태로 전이
+            //cmd parser
+            {
+              parseCmd(szBuf);
+            }
+
+            szBuf[0] = 0x00; //문자열 클리어
+          }
+          else if (_event.key.keysym.sym == SDLK_BACKSPACE)
+          {
+            int _len = strlen(szBuf);
+            szBuf[_len - 1] = 0x00;
+            printf("%s  \r", szBuf);
+          }
+          
+        }
+        break;
+        default:
+          break;
+        }
+      }
+      break;
       case SDL_TEXTINPUT:
       {
         if (nInputFSM == 1)
