@@ -4,12 +4,12 @@
 
 // extern Sint16 g_worldMap_Layer_1[];
 
-Sint16 *g_worldMap_Layer_1[8];
+// Sint16 *g_worldMap_Layer_1[8];
 
-void setup_cmd_parser(Sint16 *pWordMap)
-{
-  g_worldMap_Layer_1[0] = pWordMap;
-}
+// void setup_cmd_parser(Sint16 *pWordMap)
+// {
+//   g_worldMap_Layer_1[0] = pWordMap;
+// }
 
 int doTokenize(char *szBuf, char (*szBufToken)[MAX_TOKEN_SIZE])
 {
@@ -62,14 +62,10 @@ void parseCmd(char *_szCmd)
   {
     //save file.map
     char *pFileName = szTokens[1];
-    // SDL_RWops *rw = SDL_RWFromFile(pFileName, "wb");
-    // SDL_RWwrite(rw, g_worldMap_Layer_1[0], sizeof(Uint16), 64);
-    // SDL_RWclose(rw);
-
     static char pMsg[32];
     strcpy(pMsg, "save");
-    strcpy(pMsg+16, pFileName);
-    
+    strcpy(pMsg + 16, pFileName);
+
     SDL_Event evt;
     evt.type = SDL_USEREVENT;
     evt.user.data1 = pMsg;
@@ -80,13 +76,28 @@ void parseCmd(char *_szCmd)
   else if (strcmp(szTokens[0], "load") == 0)
   {
     char *pFileName = szTokens[1];
-    SDL_RWops *rw = SDL_RWFromFile(pFileName, "rb");
-    SDL_RWread(rw, g_worldMap_Layer_1[0], sizeof(Uint16), 64);
-    SDL_RWclose(rw);
+    static char pMsg[32];
+    strcpy(pMsg, "load");
+    strcpy(pMsg + 16, pFileName);
+
+    SDL_Event evt;
+    evt.type = SDL_USEREVENT;
+    evt.user.data1 = pMsg;
+
+    evt.user.timestamp = SDL_GetTicks();
+    SDL_PushEvent(&evt);
   }
   else if (strcmp(szTokens[0], "new") == 0)
   {
-    memset(g_worldMap_Layer_1[0], -1, 128);
+    // memset(g_worldMap_Layer_1[0], -1, 128);
+    static char *pMsg = "new";
+
+    SDL_Event evt;
+    evt.type = SDL_USEREVENT;
+    evt.user.data1 = pMsg;
+    evt.user.timestamp = SDL_GetTicks();
+
+    SDL_PushEvent(&evt);
   }
   else if (strcmp(szTokens[0], "brush") == 0) //brush change (attr)
   {

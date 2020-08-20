@@ -26,6 +26,9 @@ void putTile(SDL_Renderer *pRenderer, SDL_Texture *pTex,
 
 void putMap(Uint16 x, Uint16 y, Sint16 nTile, Sint16 *map, Uint16 map_size)
 {
+  // int _x = (_event.motion.x) / 32;
+  // int _y = (_event.motion.y) / 32;
+
   if (x < map_size && y < map_size)
   {
     int _tileIndex = y * map_size + x;
@@ -49,12 +52,25 @@ void drawWorld(SDL_Renderer *pRender, SDL_Texture *pTileSet, int tile_size,
   }
 }
 
-SDL_bool loadMap(const char *filename, Sint16 *map)
+SDL_bool loadMap(const char *filename, Sint16 *map[2])
 {
   SDL_RWops *rw = SDL_RWFromFile(filename, "rb");
   if (!rw)
     return SDL_FALSE;
-  SDL_RWread(rw, map, sizeof(Uint16), 64);
+  SDL_RWread(rw, map[0], sizeof(Uint16), 64);
+  SDL_RWread(rw, map[1], sizeof(Uint16), 64);
+  SDL_RWclose(rw);
+
+  return SDL_TRUE;
+}
+
+SDL_bool saveMap(const char *filename, Sint16 *map[2])
+{
+  SDL_RWops *rw = SDL_RWFromFile(filename, "wb");
+  if (!rw)
+    return SDL_FALSE;
+  SDL_RWwrite(rw, map[0], sizeof(Uint16), 64);
+  SDL_RWwrite(rw, map[1], sizeof(Uint16), 64);
   SDL_RWclose(rw);
 
   return SDL_TRUE;
