@@ -10,8 +10,8 @@ void putTile(SDL_Renderer *pRenderer, SDL_Texture *pTex,
              Uint16 zoom)
 {
   SDL_Rect _tmpDstRt;
-  _tmpDstRt.x = _x * (tile_size * zoom);
-  _tmpDstRt.y = _y * (tile_size * zoom);
+  _tmpDstRt.x = (_x * (tile_size * zoom));
+  _tmpDstRt.y = (_y * (tile_size * zoom));
   _tmpDstRt.w = (tile_size * zoom);
   _tmpDstRt.h = (tile_size * zoom);
 
@@ -41,7 +41,7 @@ void drawWorld(SDL_Renderer *pRender, SDL_Texture *pTileSet, int tile_size,
                int zoom,
                int x, int y, int map_size, Sint16 *map)
 {
-  for (int i = 0; i < 64; i++)
+  for (int i = 0; i < 256; i++)
   {
     Sint16 _index = map[i];
     if (_index != -1)
@@ -57,8 +57,8 @@ SDL_bool loadMap(const char *filename, Sint16 *map[2])
   SDL_RWops *rw = SDL_RWFromFile(filename, "rb");
   if (!rw)
     return SDL_FALSE;
-  SDL_RWread(rw, map[0], sizeof(Uint16), 64);
-  SDL_RWread(rw, map[1], sizeof(Uint16), 64);
+  SDL_RWread(rw, map[0], sizeof(Uint16), 256);
+  SDL_RWread(rw, map[1], sizeof(Uint16), 256);
   SDL_RWclose(rw);
 
   return SDL_TRUE;
@@ -69,8 +69,8 @@ SDL_bool saveMap(const char *filename, Sint16 *map[2])
   SDL_RWops *rw = SDL_RWFromFile(filename, "wb");
   if (!rw)
     return SDL_FALSE;
-  SDL_RWwrite(rw, map[0], sizeof(Uint16), 64);
-  SDL_RWwrite(rw, map[1], sizeof(Uint16), 64);
+  SDL_RWwrite(rw, map[0], sizeof(Uint16), 256);
+  SDL_RWwrite(rw, map[1], sizeof(Uint16), 256);
   SDL_RWclose(rw);
 
   return SDL_TRUE;
