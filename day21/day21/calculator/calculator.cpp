@@ -107,6 +107,21 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
       return FALSE;
    }
+
+   //유니코드 문자를 정수와 실수로 변환하기
+   static TCHAR szTemp[256];
+
+   const TCHAR* _str_pi = L"3.14";
+   const TCHAR* _str_int = L"314";
+
+   swprintf_s(szTemp, sizeof(szTemp) / sizeof(TCHAR), L"pi : %f , num : %d",
+       _wtof(_str_pi),
+       _wtoi(_str_int)
+   );
+   OutputDebugString(szTemp);
+
+
+   //계산기
    CreateWindow(L"static", //클래스 종류
        L"계산기", //출력 텍스트
        WS_CHILD | WS_VISIBLE | WS_BORDER, //스타일
