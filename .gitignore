@@ -9,4 +9,6 @@ out/
 *.dll
 *.pyd
 *.exe
-*.pyd
+Debug/
+Release/
+.vs/
