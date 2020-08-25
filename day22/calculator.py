@@ -10,5 +10,8 @@ def multiply(a,b) :
 def divide(a,b) :
   return a/b
 
-print('calculator start')
-print(f'calculator start {plus(2,3)}')
+if __name__ == "__main__" :
+  print('calculator start')
+  print(f'calculator test {plus(2,3)}')
+
+  print(f'this is : {__name__}')
