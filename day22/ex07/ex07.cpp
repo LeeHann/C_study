@@ -16,6 +16,7 @@ ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);
 LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK testWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -55,7 +56,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     return (int) msg.wParam;
 }
 
-
+HWND testWndHandle;
+WNDPROC oldEditProc;
 
 //
 //  함수: MyRegisterClass()
@@ -82,6 +84,8 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
     return RegisterClassExW(&wcex);
 }
+
+
 
 //
 //   함수: InitInstance(HINSTANCE, int)
@@ -125,6 +129,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
     {
+    case WM_CREATE:
+    {
+        testWndHandle = CreateWindow(L"edit", NULL,
+            WS_CHILD | WS_VISIBLE | WS_BORDER,
+            100, 100, 200, 32,
+            hWnd, (HMENU)1001, hInst, NULL
+        );
+        oldEditProc = (WNDPROC)SetWindowLong(testWndHandle, GWL_WNDPROC, (LONG)testWndProc);
+    }
+    break;
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -177,4 +191,27 @@ INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+LRESULT CALLBACK testWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+{
+    switch (message)
+    {
+    case WM_KEYDOWN:
+    {
+        static TCHAR szbuf[256];
+        swprintf_s(szbuf, sizeof(szbuf) / sizeof(TCHAR), L"key :%8d\n", wParam);
+        OutputDebugString(szbuf);
+    }
+        break;
+    case WM_CHAR:
+    {
+        if (wParam < '0' || wParam > '9') return 0;
+    }
+    break;
+    default:
+        break;
+    }
+
+    return CallWindowProc(oldEditProc, hWnd, message, wParam, lParam);
 }
