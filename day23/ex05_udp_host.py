@@ -1,3 +1,4 @@
+#%%
 import socket
 
 udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -7,3 +8,4 @@ print('bind port 8284')
 _data, _rinfo = udp_socket.recvfrom(1024)
 
 print(f'received : {_rinfo[0]} : {_rinfo[1]} : {_data.decode()}')
+# %%
