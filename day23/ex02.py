@@ -35,3 +35,28 @@ for node in _nodes :
   # print(node.attrib['name'])
 
 _f.close()
+#%%
+_str = _nodes[0].attrib['name']
+_tmp = f'{_str:32}'
+bytes(_tmp, 'utf-8')
+
+# %%
+from struct import *
+
+_f = open('sheet2.bin','wb')
+for node in _nodes :
+  _str = node.attrib['name']
+  _tmp = f'{_str:32}'
+  bytes(_tmp, 'utf-8')
+  _f.write(bytes(_tmp, 'utf-8'))
+  
+  buf = pack('hhhh',
+  int(node.attrib['x'])
+  ,int(node.attrib['y'])
+  ,int(node.attrib['width'])
+  ,int(node.attrib['height'])
+  )  
+  _f.write(buf)
+
+_f.close()
+# %%
