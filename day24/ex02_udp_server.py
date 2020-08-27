@@ -4,9 +4,9 @@ from struct import *
 
 udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-udp_socket.bind(('127.0.0.1', 8284))
+udp_socket.bind(('', 8284))
 print('init socket')
-#%%
+
 while True :
   print('wait request...')
   _data,_rinfo = udp_socket.recvfrom(1024)
@@ -31,13 +31,15 @@ while True :
   print('response ok')
 
 import threading
+
 _serverThread = threading.Thread(target=packet_process)
 _serverThread.daemon = True
 _serverThread.start()
 
-while True :
-  #packet_process()
+while True:
+  # packet_process()
   print('input cmd : ')
   cmd = input()
-  if cmd == 'exit' : 
+  if cmd == 'exit':
     break
+# %%
