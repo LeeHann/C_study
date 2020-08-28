@@ -42,3 +42,7 @@ if __name__ == "__main__":
     # 학습 후
     print(model(_input))
 # %%
+    model.save_weights('train_data/xor.ckpt') #check point
+
+# %%
+    
