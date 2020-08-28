@@ -21,8 +21,13 @@ tensor_d = tensor_b + tensor_c
 print(tensor_d.numpy())
 
 # %%
-tensor_ma = tf.constant([[1,2],[3,4]])
-tensor_mb = tf.constant([[2,0],[0,2]])
+tensor_ma = tf.constant([[1, 2], [3, 4]])
+tensor_mb = tf.constant([[2, 0], [0, 2]])
 tensor_mc = tensor_ma * tensor_mb
 
 print(tensor_mc.numpy())
+
+tensor_md = tf.matmul(tensor_ma, tensor_mb)
+print(tensor_md.numpy())
+
+# %%

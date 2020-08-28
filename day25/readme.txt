@@ -12,5 +12,6 @@ print(_ex02.__doc__)
 _ex02.hello()
 
 <텐서플로우>
-1. 가상환경에서 설치 pip install tensorflow
-2. 
+1. 가상환경에서 설치
+  pip install tensorflow
+  pip install tensorflow-gpu
